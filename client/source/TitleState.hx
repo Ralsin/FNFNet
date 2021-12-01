@@ -1,7 +1,5 @@
 package;
 
-import crashdumper.CrashDumper;
-import crashdumper.SessionData;
 import polymod.Polymod.Framework;
 import lime.utils.AssetCache;
 import Controls;
@@ -55,10 +53,8 @@ class TitleState extends MusicBeatState
 	override public function create():Void
 	{
 		if( FlxG.save.data.pauseonunfocus != null) FlxG.autoPause = FlxG.save.data.pauseonunfocus;
-		var unique_id:String = SessionData.generateID("FNFNet_"); 
 		//generates unique id: "fooApp_YYYY-MM-DD_HH'MM'SS_CRASH"
 		
-		var crashDumper = new CrashDumper(unique_id, "crashlogs");
 		#if updatecheck
 		var http = new haxe.Http("https://raw.githubusercontent.com/General-Infinity/FNFNet/master/client/version.txt");
 
@@ -162,15 +158,15 @@ class TitleState extends MusicBeatState
 			var now = Date.now();
 			trace(now.getHours());
 			if(now.getHours() >= 18) {
-				FlxG.sound.playMusic(Paths.music('freakyNight'), 0); 
+				FlxG.sound.playMusic(Paths.music('freakyNight'), 0);
+				Conductor.changeBPM(117);
 			}
 			else {
 				FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+				Conductor.changeBPM(102);
 			}
 			FlxG.sound.music.fadeIn(4, 0, 0.7);
 		}
-
-		Conductor.changeBPM(102);
 		persistentUpdate = true;
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);

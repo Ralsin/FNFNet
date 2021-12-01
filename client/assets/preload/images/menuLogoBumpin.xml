@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="menuLogoBumpin.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="menuLogoBumpin0000" x="2" y="2" width="524" height="428" frameX="-25" frameY="-21" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0001" x="528" y="2" width="574" height="470"/>
+	<SubTexture name="menuLogoBumpin0002" x="1104" y="2" width="552" height="452" frameX="-11" frameY="-9" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0003" x="2" y="474" width="546" height="446" frameX="-14" frameY="-12" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0004" x="550" y="474" width="540" height="442" frameX="-17" frameY="-14" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0005" x="1092" y="474" width="537" height="438" frameX="-19" frameY="-16" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0006" x="2" y="922" width="534" height="436" frameX="-20" frameY="-17" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0007" x="538" y="922" width="532" height="434" frameX="-21" frameY="-18" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0008" x="1072" y="922" width="530" height="432" frameX="-22" frameY="-19" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0009" x="2" y="1360" width="528" height="431" frameX="-23" frameY="-19" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0010" x="532" y="1360" width="528" height="430" frameX="-23" frameY="-20" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0011" x="1062" y="1360" width="526" height="429" frameX="-24" frameY="-20" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0012" x="2" y="1793" width="526" height="428" frameX="-24" frameY="-21" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0013" x="530" y="1793" width="525" height="428" frameX="-25" frameY="-21" frameWidth="574" frameHeight="470"/>
+	<SubTexture name="menuLogoBumpin0014" x="1057" y="1793" width="524" height="428" frameX="-25" frameY="-21" frameWidth="574" frameHeight="470"/>
+</TextureAtlas>
