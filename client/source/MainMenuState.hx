@@ -1,6 +1,7 @@
 package;
 
-import flixel.FlxBasic.FlxType;
+import online.EventState;
+import openfl.display.BitmapData;
 #if desktop
 import sys.io.File;
 import Discord.DiscordClient;
@@ -9,14 +10,12 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.effects.FlxFlicker;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import io.newgrounds.NG;
 import lime.app.Application;
 
 using StringTools;
@@ -26,8 +25,10 @@ class MainMenuState extends MusicBeatState
     var cur:Int = 0;
     var camFollow:FlxObject = new FlxObject(0, 0, 1, 1);
     var menuItems:FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
-    var optionShit:Array<String> = ['freeplay', 'play', 'options'];
+    var optionShit:Array<String> = ['freeplay', 'play', 'account', 'options'];
     var mLogo:FlxSprite = new FlxSprite(650, -500);
+    public static var exemel:String;
+	public static var char:BitmapData;
     public static var notPlaying:Bool;
 
     override function create() {
@@ -76,13 +77,16 @@ class MainMenuState extends MusicBeatState
             menuItems.add(menuItem);
             menuItem.antialiasing = true;
         }
-        var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "v" + Application.current.meta.get('version'), 12);
+        var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "v" + Application.current.meta.get('version'));
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
+        var greeting:FlxText = new FlxText(0, FlxG.height - 35, FlxG.width, "Welcome, "+FlxG.save.data.username+"!");
+		greeting.setFormat("VCR OSD Mono", 30, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(greeting);
+
         FlxG.camera.follow(camFollow, null, 0.06);
         changeItem(1, true);
         super.create();
-        super.beatHit();
         FlxTween.tween(mLogo, {y: 50}, 1, { ease: FlxEase.sineOut, onComplete: function(twn:FlxTween){FlxTween.tween(mLogo, {y: 100}, 2, { type: FlxTween.PINGPONG, ease: FlxEase.sineInOut });} });
     }
 
@@ -104,6 +108,9 @@ class MainMenuState extends MusicBeatState
                 FlxG.sound.play(Paths.sound('confirmMenu'));
                 FlxTween.tween(camFollow, {y: 1500}, 1, {ease: FlxEase.expoIn, onComplete: choose});
             }
+            if (FlxG.keys.justPressed.THREE) LoadingState.loadAndSwitchState(new EventState());
+			if (FlxG.keys.justPressed.FOUR) LoadingState.loadAndSwitchState(new FourChan());
+			if (FlxG.keys.justPressed.NINE) LoadingState.loadAndSwitchState(new online.Login());
         }
         if (FlxG.sound.music != null) Conductor.songPosition = FlxG.sound.music.time;
         super.update(elapsed);
@@ -116,17 +123,16 @@ class MainMenuState extends MusicBeatState
         if (cur < 0) cur = menuItems.length - 1;
 
         menuItems.forEach(function(ass:FlxSprite){
-            if(!start) FlxTween.tween(ass, {y: (cur-ass.ID) * FlxG.height * -0.37 + 300, x: 60 + (cur-ass.ID) * -50}, 0.5, {ease: FlxEase.sineOut});
-            else {selected = true; FlxTween.tween(ass, {y: (cur-ass.ID) * FlxG.height * -0.37 + 300, x: 60 + (cur-ass.ID) * -50}, 1, {ease: FlxEase.backOut, onComplete: function(twn:FlxTween){selected = false;}});}
+            if(!start) {
+                FlxTween.globalManager.cancelTweensOf(ass);
+                FlxTween.tween(ass, {y: (cur-ass.ID) * FlxG.height * -0.37 + 300, x: 60 + (cur-ass.ID) * -50}, 0.5, {ease: FlxEase.sineOut, onUpdate: function(twn:FlxTween){if(ass.y>FlxG.height+100){ass.alpha = 0;}else{if(ass.ID==cur) ass.alpha = 1; else ass.alpha = 0.7;}}});
+            }
+            else {selected = true; FlxTween.tween(ass, {y: (cur-ass.ID) * FlxG.height * -0.37 + 300, x: 60 + (cur-ass.ID) * -50}, 1, {ease: FlxEase.backOut, onStart: function(twn:FlxTween){if(ass.ID==cur) ass.alpha = 1; else ass.alpha = 0.7;}, onComplete: function(twn:FlxTween){selected = false;}});}
         });
-
         menuItems.forEach(function(spr:FlxSprite){
-            spr.animation.play('idle');
-            spr.alpha = 0.7;
             if (spr.ID == cur){ 
                 spr.animation.play('selected');
-                spr.alpha = 1;
-            }
+            } else {spr.animation.play('idle');}
         });
     }
     function choose(twn:FlxTween){
@@ -144,6 +150,12 @@ class MainMenuState extends MusicBeatState
                 #end		
             case 'options':
                 FlxG.switchState(new OptionsMenu());
+            case 'account':
+				#if updatecheck
+				    if(!TitleState.outdated) FlxG.switchState(!FlxG.save.data.loggedin?new online.Login():new online.Account());		
+				    else FlxG.resetState();
+				    FlxG.switchState(!FlxG.save.data.loggedin?new online.Login():new online.Account());	
+				#end
         }
     }
     override function beatHit(){

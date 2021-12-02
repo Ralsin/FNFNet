@@ -1,7 +1,7 @@
 {
     "width": 1280,
     "height": 720,
-    "addr": "127.0.0.1",
-    "resourceaddr": "192.168.1.100",
+    "addr": "net.fnf.general-infinity.tech",
+    "resourceaddr": "net.fnf.general-infinity.tech",
     "port": 2567
 }
