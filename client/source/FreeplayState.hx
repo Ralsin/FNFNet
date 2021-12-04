@@ -102,7 +102,7 @@ class FreeplayState extends MusicBeatSubstate
 		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
 		// scoreText.alignment = RIGHT;
 
-		creator = new FlxText(scoreText.x, scoreText.y + 102, 0, "Made By:", 20);
+		creator = new FlxText(scoreText.x, scoreText.y + 102, FlxG.width/3.3, "Made By:", 20);
 		creator.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, RIGHT);
 
 		desc = new FlxText(scoreText.x, scoreText.y + 136, FlxG.width/3.3, "Description:", 20);

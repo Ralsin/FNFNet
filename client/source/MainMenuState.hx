@@ -63,17 +63,12 @@ class MainMenuState extends MusicBeatState
 
         var tex = Paths.getSparrowAtlas('main_menu_assets');
 		for (i in 0...optionShit.length){
-            var menuItem:FlxSprite = new FlxSprite(-300, 60 + i*240);
+            var menuItem:FlxSprite = new FlxSprite(-300, 30 + i*230);
             menuItem.frames = tex;
             menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24, true);
             menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24, true);
             menuItem.animation.play('idle');
             menuItem.ID = i;
-            if(optionShit[i] == "play") {
-                #if updatecheck
-                    if(TitleState.outdated) menuItem.alpha = 0.5;
-                #end
-            }
             menuItems.add(menuItem);
             menuItem.antialiasing = true;
         }
@@ -104,12 +99,14 @@ class MainMenuState extends MusicBeatState
                 FlxG.switchState(new TitleState());
             }
             if (controls.ACCEPT){
+                if((optionShit[cur] == "account" || optionShit[cur] == "fnfnet") && TitleState.outdated){
+					FlxG.sound.play(Paths.sound("no"));
+					return;
+                }
                 selected = true;
                 FlxG.sound.play(Paths.sound('confirmMenu'));
                 FlxTween.tween(camFollow, {y: 1500}, 1, {ease: FlxEase.expoIn, onComplete: choose});
             }
-            if (FlxG.keys.justPressed.THREE) LoadingState.loadAndSwitchState(new EventState());
-			if (FlxG.keys.justPressed.FOUR) LoadingState.loadAndSwitchState(new FourChan());
 			if (FlxG.keys.justPressed.NINE) LoadingState.loadAndSwitchState(new online.Login());
         }
         if (FlxG.sound.music != null) Conductor.songPosition = FlxG.sound.music.time;
@@ -154,6 +151,7 @@ class MainMenuState extends MusicBeatState
 				#if updatecheck
 				    if(!TitleState.outdated) FlxG.switchState(!FlxG.save.data.loggedin?new online.Login():new online.Account());		
 				    else FlxG.resetState();
+                #else
 				    FlxG.switchState(!FlxG.save.data.loggedin?new online.Login():new online.Account());	
 				#end
         }
