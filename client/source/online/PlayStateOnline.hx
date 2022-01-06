@@ -229,8 +229,10 @@ class PlayStateOnline extends MusicBeatState
 			case null:
 				
 			case "WASD":
-				controls.setKeyboardScheme(KeyboardScheme.Solo);
+				controls.setKeyboardScheme(KeyboardScheme.Wasd);
 			case "DFJK":
+				controls.setKeyboardScheme(KeyboardScheme.Dfjk);
+			case "Custom":
 				controls.setKeyboardScheme(KeyboardScheme.Custom);
 		}
 
