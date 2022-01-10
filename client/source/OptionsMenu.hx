@@ -373,6 +373,13 @@ class OptionsMenu extends MusicBeatState
 							initSettings(false, 4, FlxG.save.data.ks);
 						case "DFJK":
 							kbd = "Custom";
+							if (FlxG.save.data.upBind == null || FlxG.save.data.downBind == null || FlxG.save.data.leftBind == null || FlxG.save.data.rightBind == null)
+							{
+								FlxG.save.data.upBind = "W";
+								FlxG.save.data.downBind = "S";
+								FlxG.save.data.leftBind = "A";
+								FlxG.save.data.rightBind = "D";
+							}	
 							controls.setKeyboardScheme(KeyboardScheme.Custom, true);
 							FlxG.save.data.ks = "Custom";
 							FlxG.save.flush();
@@ -381,14 +388,6 @@ class OptionsMenu extends MusicBeatState
 							kbd = "WASD";
 							controls.setKeyboardScheme(KeyboardScheme.Wasd, true);
 							FlxG.save.data.ks = "WASD";
-							if (FlxG.save.data.upBind == null || FlxG.save.data.downBind == null || FlxG.save.data.leftBind == null
-								|| FlxG.save.data.rightBind == null)
-							{
-								FlxG.save.data.upBind = W;
-								FlxG.save.data.downBind = S;
-								FlxG.save.data.leftBind = A;
-								FlxG.save.data.rightBind = D;
-							}
 							FlxG.save.flush();
 							initSettings(false, 4, FlxG.save.data.ks);
 						default:
