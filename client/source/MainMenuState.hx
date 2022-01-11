@@ -75,9 +75,11 @@ class MainMenuState extends MusicBeatState
         var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "v" + Application.current.meta.get('version'));
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-        var greeting:FlxText = new FlxText(0, FlxG.height - 35, FlxG.width, "Welcome, "+FlxG.save.data.username+"!");
-		greeting.setFormat("VCR OSD Mono", 30, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		add(greeting);
+        if(FlxG.save.data.loggedin){
+            var greeting:FlxText = new FlxText(0, FlxG.height - 35, FlxG.width, "Welcome, "+FlxG.save.data.username+"!");
+		    greeting.setFormat("VCR OSD Mono", 30, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		    add(greeting);
+        }
 
         FlxG.camera.follow(camFollow, null, 0.06);
         changeItem(1, true);
