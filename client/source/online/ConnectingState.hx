@@ -1,7 +1,5 @@
 package online;
 
-import openfl.sensors.Accelerometer;
-import flixel.system.FlxSound;
 import openfl.events.Event;
 import openfl.net.URLRequest;
 import openfl.media.Sound;

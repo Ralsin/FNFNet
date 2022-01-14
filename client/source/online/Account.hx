@@ -11,7 +11,6 @@ import flixel.FlxSprite;
 import haxe.Json;
 import flixel.FlxG;
 
-
 class Account extends MusicBeatState
 {
     var lerank:EzText;
