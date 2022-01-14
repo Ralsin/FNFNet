@@ -1,5 +1,7 @@
 package online;
 
+import openfl.sensors.Accelerometer;
+import flixel.system.FlxSound;
 import openfl.events.Event;
 import openfl.net.URLRequest;
 import openfl.media.Sound;
@@ -185,6 +187,7 @@ class ConnectingState extends MusicBeatState {
                                 LobbyState.p2.alpha = 1;
                                 p2name = message.name;
                                 LobbyState.p2color = message.registered?FlxColor.YELLOW:FlxColor.WHITE;
+                                FlxG.sound.play(Paths.sound("join"));
                             });
                             room.onMessage('userleft', function(message){
                                 LobbyState.p2.alpha = 0;
