@@ -1,5 +1,10 @@
 {
     "character":{
+        "camera": {
+            "x": -90,
+            "y": 25 
+        },
+        "flipX": false,
         "size": {
             "width": 0,
             "height": 0
@@ -11,38 +16,66 @@
     },
     "animations": {
         "idle": {
-            "prefix": "BF idle dance",
+            "prefix": "bb idle",
             "offsets": {
                 "x": 0,
                 "y": 0
             }
         },
         "up": {
-            "prefix": "BF NOTE UP",
+            "prefix": "bb up",
             "offsets": {
-                "x": 55,
-                "y": 92
+                "x": 0,
+                "y": 0
             }
         },
         "down": {
-            "prefix": "BF NOTE DOWN",
+            "prefix": "bb down",
             "offsets": {
                 "x": 0,
-                "y": -75
+                "y": 0
             }
         },
         "left": {
-            "prefix": "BF NOTE LEFT",
+            "prefix": "bb left",
             "offsets": {
-                "x": 141,
-                "y": -11
+                "x": 0,
+                "y": 0
             }
         },
         "right": {
-            "prefix": "BF NOTE RIGHT",
+            "prefix": "bb right",
             "offsets": {
                 "x": 0,
-                "y": -11
+                "y": 0
+            }
+        },
+        "upMiss": {
+            "prefix": "bb up",
+            "offsets": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        "downMiss": {
+            "prefix": "bb down",
+            "offsets": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        "leftMiss": {
+            "prefix": "bb left",
+            "offsets": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        "rightMiss": {
+            "prefix": "bb right",
+            "offsets": {
+                "x": 0,
+                "y": 0
             }
         }
     }
