@@ -33,6 +33,8 @@
       Password: <input name="password" type="password"><p id="passerr" style="color:red"></p><br><br>
       Profile Picture URL: <input name="pfp" type="text"><p id="pfperr" style="color:red"></p><br>
       Background URL:<input name="bg" type="text"><p id="bgerr" style="color:red"></p><br>
+      Character.PNG URL:<input name="skinPng" type="text"><p id="pngerr" style="color:red"></p><br>
+      Character.XML URL:<input name="skinXml" type="text"><p id="xmlerr" style="color:red"></p><br>
       Phrase: <input name="phrase" id="phrase" type="text"><p id="pherr" style="color:red"></p><br>
       <script id="captcha" src="doom.js?version=16" countdown="on" label="Captcha" enemies="4"></script>
     </form>
@@ -42,19 +44,20 @@
       function funnything(){
            var checke = false;
            var leform = document.getElementById("leform");
-           console.log(leform["phrase"].value.length >= 65);
            if(leform["username"].value == "" || leform["password"].value == "") {
                document.getElementById("userr").innerText = leform["username"].value == ""?"You forgot to enter the username.":"";
                document.getElementById("passerr").innerText = leform["password"].value == ""?"You forgot to enter the password.":"";
                checke = true;
            }
-           if(leform["bg"].value != "" || leform["pfp"].value != ""){
+           if(leform["bg"].value != "" || leform["pfp"].value != "" || leform["skinPng"].value != "" || leform["skinXml"].value != ""){
               var reg = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
               document.getElementById("pfperr").innerText = leform["pfp"].value.match(reg)==null?"Enter a valid URL.":"";
               document.getElementById("bgerr").innerText = leform["bg"].value.match(reg)==null?"Enter a valid URL.":"";
+              document.getElementById("pngerr").innerText = leform["skinPng"].value.match(reg)==null?"Enter a valid URL.":"";
+              document.getElementById("xmlerr").innerText = leform["skinXml"].value.match(reg)==null?"Enter a valid URL.":"";
               checke = true;
            }
-           if(leform["phrase"].value.length >= 65) {
+           if(leform["phrase"].value.length > 64) {
             document.getElementById("pherr").innerText = "Phrase can only be 64 characters long.";
             return;  
            }

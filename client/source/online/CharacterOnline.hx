@@ -317,6 +317,38 @@ class CharacterOnline extends FlxSprite
 				}
 			}
 			md.request();
+
+			// shit doesnt work pwq
+			// if(ConnectingState.p1skin && isPlayer){
+			// 	sys.thread.Thread.create(()-> {
+			// 		BitmapData.loadFromFile(ConnectingState.p1image).then(function(image){
+			// 			setFrames(FlxAtlasFrames.fromSparrow(image, ConnectingState.p1xml), false);
+			// 			animation.addByPrefix('idle', 'BF idle dance', 24, false);
+			// 			animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
+			// 			animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
+			// 			animation.addByPrefix('singRIGHT', 'BF NOTE RIGHT0', 24, false);
+			// 			animation.addByPrefix('singDOWN', 'BF NOTE DOWN0', 24, false);
+			// 			animation.addByPrefix('hey', 'BF HEY', 24, false);
+			// 			animation.addByPrefix('scared', 'BF idle shaking', 24);
+			
+			// 			return Future.withValue(image);
+			// 		});
+			// 	});
+			// }
+			// if(ConnectingState.p2skin && !isPlayer){
+			// 	sys.thread.Thread.create(()-> {
+			// 		BitmapData.loadFromFile(ConnectingState.p2image).then(function(image){
+			// 			setFrames(FlxAtlasFrames.fromSparrow(image, ConnectingState.p2xml), false);
+			// 			animation.addByPrefix('idle', 'Dad idle dance', 24);
+			// 			animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
+			// 			animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24);
+			// 			animation.addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24);
+			// 			animation.addByPrefix('singLEFT', 'Dad Sing Note LEFT', 24);
+						
+			// 			return Future.withValue(image);
+			// 		});
+			// 	});
+			// }
 	}
 
 	override function update(elapsed:Float)

@@ -1,5 +1,9 @@
 package online;
 
+import flixel.system.FlxAssets.FlxGraphicAsset;
+import openfl.utils.Future;
+import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.util.FlxTimer;
 import openfl.events.Event;
 import openfl.net.URLRequest;
 import openfl.media.Sound;
@@ -12,6 +16,7 @@ import io.colyseus.Client;
 import io.colyseus.Room;
 import Config.data;
 import flixel.FlxG;
+import openfl.display.BitmapData;
 
 using StringTools;
 typedef SongData = {
@@ -45,6 +50,14 @@ class ConnectingState extends MusicBeatState {
     public static var conmode:String;
     public static var rooms:Room<Stuff>;
     public static var coly:Client;
+
+    public static var p1skin:Bool;
+    public static var p1image:Dynamic;
+    public static var p1xml:String;
+    public static var p2skin:Bool;
+    public static var p2image:Dynamic;
+    public static var p2xml:String;
+
     var nmsongs:Array<String> = [
 		'tutorial',
 		'test',
@@ -108,6 +121,40 @@ class ConnectingState extends MusicBeatState {
                         LobbyState.rooms = room;
                         try{
                             room.send('recvprev', {name: p1name, registered: FlxG.save.data.loggedin});
+                            room.onMessage('bread', function(message){
+                                p1skin = true;
+                                var p1xmlurl = new haxe.Http(message.skinXml);
+                                p1xmlurl.onData = function (data:String) {
+                                    p1image = message.skinPng;
+                                    p1xml = data;
+                                    sys.thread.Thread.create(()-> {
+                                        BitmapData.loadFromFile(message.skinPng).then(function(image){
+                                            LobbyState.p1.setFrames(FlxAtlasFrames.fromSparrow(image, data), false);
+                                            LobbyState.p1.animation.addByPrefix('idle', 'BF idle dance', 24, true);
+                                            LobbyState.p1.animation.play("idle");
+                                            return Future.withValue(image);
+                                        });
+                                    });
+                                };
+                                p1xmlurl.request();
+                            });
+                            room.onMessage('butter', function(message){
+                                p2skin = true;
+                                var p2xmlurl = new haxe.Http(message.skinXml);
+                                p2xmlurl.onData = function (data:String) {
+                                    p2image = message.skinPng;
+                                    p2xml = data;
+                                    sys.thread.Thread.create(()-> {
+                                        BitmapData.loadFromFile(message.skinPng).then(function(image){
+                                            LobbyState.p2.setFrames(FlxAtlasFrames.fromSparrow(image, data), false);
+                                            LobbyState.p2.animation.addByPrefix('idle', 'BF idle dance', 24, true);
+                                            LobbyState.p2.animation.play("idle");
+                                            return Future.withValue(image);
+                                        });
+                                    });
+                                };
+                                p2xmlurl.request();
+                            });
                             room.onMessage('creatematch', function(message){
                                 ChooseSong.celsong = message.song;
                                 //modded = !nmsongs.contains(message.song);
@@ -184,7 +231,9 @@ class ConnectingState extends MusicBeatState {
                             room.onMessage('userjoin', function(message){
                                 LobbyState.p2.alpha = 1;
                                 p2name = message.name;
-                                LobbyState.p2color = message.registered?FlxColor.YELLOW:FlxColor.WHITE;
+                                if(message.registered){
+                                LobbyState.p2color = FlxColor.YELLOW;
+                                } else {LobbyState.p2color = FlxColor.WHITE;}
                                 FlxG.sound.play(Paths.sound("join"));
                             });
                             room.onMessage('userleft', function(message){
@@ -208,163 +257,6 @@ class ConnectingState extends MusicBeatState {
                             PlayStateOnline.onlinemodetext.screenCenter(XY);
                         }
                     });
-                }else if(type == "join"){
-                    conmode = 'join';
-                    if(FlxG.save.data.username != null) p2name = FlxG.save.data.username;
-                    else p2name = "guest" + FlxG.random.int(0, 9999);
-                    try{
-                        coly.join("battle", [], Stuff, function(err, room) { 
-                            if (err != null) {
-                                trace("JOIN ERROR: " + err);
-                                FlxG.switchState(new FNFNetMenu("Could not find a room"));
-                                return;
-                            }
-                            rooms = room;
-                            LobbyState.rooms = room;
-                            PlayStateOnline.rooms = room;
-                            room.send('recvprev', {name: p2name});
-                            room.onMessage("start", function(message){
-                                LoadingOnline.loadAndSwitchState(new PlayStateOnline());
-                                PlayStateOnline.startedMatch = true;
-                                //new PlayStateOnline().starts();
-                                ConnectingState.inlobby = false;
-                            });
-                            room.onMessage('loaded', function(message){
-                                PlayStateOnline.assing = true;
-                            });
-                            room.onMessage('finished', function(message){
-                                PlayStateOnline.otherfinished = true;
-                            });
-                            room.onError += function(code, message) {
-                                FlxG.switchState(new FNFNetMenu("A strange error occured"));
-                              };
-                            room.onMessage("chatHist", function(message){
-                                p1name = message.p1name;
-                                p2name = message.p2name;
-                            });
-                            room.onMessage("misc", (message) -> {
-                                if(inlobby){
-                                    if(message.p1) {
-                                        LobbyState.playertxt.members[0].applyMarkup("/r/Ready/r/", [new FlxTextFormatMarkerPair(new FlxTextFormat(FlxColor.GREEN), "/r/")]);
-                                    }else{
-                                        LobbyState.playertxt.members[0].applyMarkup("/r/Not Ready/r/", [new FlxTextFormatMarkerPair(new FlxTextFormat(FlxColor.RED), "/r/")]);
-                                    }
-                                    if(message.p2) {
-                                        LobbyState.playertxt.members[1].applyMarkup("/r/Ready/r/", [new FlxTextFormatMarkerPair(new FlxTextFormat(FlxColor.GREEN), "/r/")]);
-                                    }else{
-                                        LobbyState.playertxt.members[1].applyMarkup("/r/Not Ready/r/", [new FlxTextFormatMarkerPair(new FlxTextFormat(FlxColor.RED), "/r/")]);
-                                    }
-                                }
-                            });
-                            room.onMessage('userleft', function(message){
-                                LobbyState.p2.alpha = 0;
-                                if(PlayStateOnline.startedMatch) PlayStateOnline.leftText.text = "User left the game.";
-                                if(!PlayStateOnline.playedgame){
-                                    FlxG.switchState(new FNFNetMenu());
-                                    p2name = '';
-                                }
-                                if(!PlayStateOnline.playedgame)LobbyState.playertxt.members[1].applyMarkup("/r/Not Ready/r/", [new FlxTextFormatMarkerPair(new FlxTextFormat(FlxColor.RED), "/r/")]);
-                            });
-                            room.onMessage("message", function(message){
-                                p1name = message.p1name;
-                                LobbyState.songdata.song = message.song;
-                                LobbyState.songdata.week = message.week;
-                                var sng = message.song;
-                                var wk = message.week;
-                                var dif = message.diff;
-                                var modif = switch(dif){
-                                    case 0:
-                                        "-easy";
-                                    default:
-                                        "";
-                                    case 2:
-                                        "-hard";
-                                }
-                                trace(nmsongs.contains(message.song));
-                                if(!nmsongs.contains(message.song)){
-                                    GlobalSettings.songDir = sng;
-                                    modded = true;
- 
-                                    var http = new haxe.Http('http://'+data.resourceaddr+'/songs/$sng/chart$modif.json');
-                    
-                                    remove(loadprog);
-                                    loadprog = new Alphabet(0, 0, "Loading Chart...", true);
-                                    loadprog.screenCenter(XY);
-                                    add(loadprog);
-
-                                    http.onData = function (data:String) {
-                                        trace("bing bong");
-                                        PlayStateOnline.modinst = new Sound();
-                                        PlayStateOnline.modvoices = new Sound();
-
-                                        PlayStateOnline.SONG = Song.loadFromJson(data, message.song, true);
-                                        PlayStateOnline.isStoryMode = false;
-                                        PlayStateOnline.storyDifficulty = message.diff;
-                            
-                                        PlayStateOnline.storyWeek = message.week;
-                                        LobbyState.songdata.difficulty = PlayStateOnline.storyDifficulty;
- 
-                                        PlayStateOnline.modinst.addEventListener(Event.COMPLETE, function(e:Event){
-                                            remove(loadprog);
-                                            loadprog = new Alphabet(0, 0, "Loading Voices...", true);
-                                            loadprog.screenCenter(XY);
-                                            add(loadprog);
-                                            PlayStateOnline.modvoices.addEventListener(Event.COMPLETE, function(e:Event){
-                                                remove(loadprog);
-                                                loadprog = new Alphabet(0, 0, "All Done!", true);
-                                                loadprog.screenCenter(XY);
-                                                add(loadprog);
-                                                LoadingOnline.loadAndSwitchState(new LobbyState());
-                                            });
-                                            PlayStateOnline.modvoices.load(new URLRequest('http://'+Config.data.resourceaddr+'/songs/'+sng+'/Voices.ogg'));
-                                        });
-                                        PlayStateOnline.modinst.load(new URLRequest('http://'+Config.data.resourceaddr+'/songs/'+sng+'/Inst.ogg'));
-                                        remove(loadprog);
-                                        loadprog = new Alphabet(0, 0, "Loading Instrumental...", true);
-                                        loadprog.screenCenter(XY);
-                                        add(loadprog);
-                                    }
-                                    http.request();
-                                }else{
-                                    modded = false;
-                                    var poop:String = Highscore.formatSong(message.song, 2);
-
-                                    PlayStateOnline.SONG = Song.loadFromJson(poop, message.song);
-                                    PlayStateOnline.isStoryMode = false;
-                                    PlayStateOnline.storyDifficulty = message.diff;
-                        
-                                    PlayStateOnline.storyWeek = message.week;
-                                    LobbyState.songdata.difficulty = PlayStateOnline.storyDifficulty;
-                                    LoadingOnline.loadAndSwitchState(new LobbyState());
-                                }
-                            });
-                            room.onMessage("bubble", function(message){
-                                if(message.p1){
-                                    
-                                }else
-                                {
-
-                                }
-                            });
-                            room.onMessage("retscore", function(message){
-                                PlayStateOnline.p1score = message.p1score;
-                                PlayStateOnline.p2score = message.p2score;
-
-                                PlayStateOnline.p1scoretext.text = p1name + " Score: " + PlayStateOnline.p1score;
-                                PlayStateOnline.p2scoretext.text = p2name + " Score: " + PlayStateOnline.p2score;
-                            });
-                        });
-                    }catch(e:Any){
-                        trace(e);
-                    }
-                    //var poop:String = Highscore.formatSong("philly", 2);
-
-                    ///PlayStateOnline.SONG = Song.loadFromJson(poop, "philly");
-                    ///PlayStateOnline.isStoryMode = false;
-                    ///PlayStateOnline.storyDifficulty = 2;
-        
-                   /// PlayStateOnline.storyWeek = 3;
-                    //LoadingOnline.loadAndSwitchState(new PlayStateOnline());
                 }else if(type == "code"){
                     conmode = 'join';
                     if(FlxG.save.data.username != null) p2name = FlxG.save.data.username;
@@ -431,6 +323,40 @@ class ConnectingState extends MusicBeatState {
             LobbyState.rooms = room;
             PlayStateOnline.rooms = room;
             room.send('recvprev', {name: p2name, registered: FlxG.save.data.loggedin});
+            room.onMessage('bread', function(message){
+                p1skin = true;
+                var p1xmlurl = new haxe.Http(message.skinXml);
+                p1xmlurl.onData = function (data:String) {
+                    p1image = message.skinPng;
+                    p1xml = data;
+                    sys.thread.Thread.create(()-> {
+                        BitmapData.loadFromFile(message.skinPng).then(function(image){
+                            LobbyState.p1.setFrames(FlxAtlasFrames.fromSparrow(image, data), false);
+                            LobbyState.p1.animation.addByPrefix('idle', 'BF idle dance', 24, true);
+                            LobbyState.p1.animation.play("idle");
+                            return Future.withValue(image);
+                        });
+                    });
+                };
+                p1xmlurl.request();
+            });
+            room.onMessage('butter', function(message){
+                p2skin = true;
+                var p2xmlurl = new haxe.Http(message.skinXml);
+                p2xmlurl.onData = function (data:String) {
+                    p2image = message.skinPng;
+                    p2xml = data;
+                    sys.thread.Thread.create(()-> {
+                        BitmapData.loadFromFile(message.skinPng).then(function(image){
+                            LobbyState.p2.setFrames(FlxAtlasFrames.fromSparrow(image, data), false);
+                            LobbyState.p2.animation.addByPrefix('idle', 'BF idle dance', 24, true);
+                            LobbyState.p2.animation.play("idle");
+                            return Future.withValue(image);
+                        });
+                    });
+                };
+                p2xmlurl.request();
+            });
             room.onMessage("start", function(message){
                 LoadingOnline.loadAndSwitchState(new PlayStateOnline());
                 PlayStateOnline.startedMatch = true;

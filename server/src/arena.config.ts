@@ -49,34 +49,14 @@ export default Arena({
 
         app.post("/edit/", (req, res, next) => {
             if(req.body.password == null || req.body.username == null || req.body.pfp == null || req.body.bg == null || symbolCheck(req.body.username)) return res.status(401).json({"message": "one or more of the four fields are null or your name contains symbols."});
-            accbase.login(res, {username: req.body.username, password: req.body.password, action: "edit", pfp: req.body.pfp, bg: req.body.bg, phrase: req.body.phrase==null?"":req.body.phrase});
+            accbase.login(res, {username: req.body.username, password: req.body.password, action: "edit", pfp: req.body.pfp, bg: req.body.bg, skinPng: req.body.skinPng==null?false:req.body.skinPng, skinXml: req.body.skinXml==null?false:req.body.skinXml, phrase: req.body.phrase==null?"":req.body.phrase});
         });
 
         app.post("/login/", (req, res, next) => {
             if(req.body.password == null || req.body.username == null || req.body.action == null || req.body.value == null || symbolCheck(req.body.username)) return res.status(401).json({"message": "one or more of the four fields are null or your name contains symbols."});
             accbase.login(res, {username: req.body.username, password: req.body.password, action: req.body.action})
-/*
-            if(req.body.username == "janny"){
-                if(req.body.password == "sneedsux"){
-                    switch(req.body.action){
-                        case "info":
-                            accbase.accinfo(res, req.body.value);
-                            break;
-                        default:
-                            res.status(404).send("no action specified");
-                            break;
-                    }
-                }else{
-                    res.status(401).send("invalid pass");
-                }
-            }
-            else{
-                res.status(401).send("invalid username");
-            };
-*/
         });
         app.post("/leaderboard/", (req, res) => {
-            //;
             accbase.db.all("SELECT id, username, wins, loses, pfp, points FROM accounts ORDER BY points DESC LIMIT 10", (err, row) => {
                 if(err || row == null) return res.status(401).json({"message": "Account not found", "data": err});
                 res.status(200).json({
