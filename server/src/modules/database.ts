@@ -8,8 +8,8 @@ export class database
         this.db = new sqlite.Database('database.db', (err) => {
             if (err) {
               throw console.error(err.message);
-            } //id, username, password, points, creation, banned, admin, friends
-            this.db.exec("CREATE TABLE `accounts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT,`username` VARCHAR(24),`password` VARCHAR(128), `phrase` VARCHAR(64) DEFAULT 'Phrase has not been set',`pfp` VARCHAR(2048) DEFAULT '', `bg` VARCHAR(2048) DEFAULT '', `wins` INTEGER unsigned DEFAULT 0, `loses` INTEGER unsigned DEFAULT 0, `points` INTEGER unsigned DEFAULT 0,`creation` DATETIME DEFAULT CURRENT_TIMESTAMP, `banned` BOOLEAN DEFAULT false, `admin` BOOLEAN DEFAULT false, `friends` TEXT);", 
+            } //id, username, password, points, creation, banned, admin, friends, skinPng, skinXml
+            this.db.exec("CREATE TABLE `accounts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT,`username` VARCHAR(24),`password` VARCHAR(128), `phrase` VARCHAR(64) DEFAULT 'Phrase has not been set',`pfp` VARCHAR(2048) DEFAULT '', `bg` VARCHAR(2048) DEFAULT '', `wins` INTEGER unsigned DEFAULT 0, `loses` INTEGER unsigned DEFAULT 0, `points` INTEGER unsigned DEFAULT 0,`creation` DATETIME DEFAULT CURRENT_TIMESTAMP, `banned` BOOLEAN DEFAULT false, `admin` BOOLEAN DEFAULT false, `friends` TEXT, `skinPng` VARCHAR(2048) DEFAULT '', `skinXml` VARCHAR(2048) DEFAULT '', `skinned` BOOLEAN DEFAULT false);", 
              (row) => {
             //     const hash = bcrypt.hashSync('chuck', 10);
             //     this.db.exec(`INSERT INTO accounts (id, username, password, phrase, points, pfp) VALUES (NULL, 'chuck', '${hash}', 'default', 9, '');`);
@@ -35,7 +35,10 @@ export class database
                 "points": row.points,
                 "creation": row.creation,
                 "banned": row.banned,
-                "admin": row.admin
+                "admin": row.admin,
+                "skinPng": row.skinPng,
+                "skinXml": row.skinXml,
+                "skinned": row.skinned
             });
         });
     }
@@ -75,18 +78,30 @@ export class database
                             "points": row.points,
                             "creation": row.creation,
                             "banned": row.banned,
-                            "admin": row.admin
+                            "admin": row.admin,
+                            "skinPng": row.skinPng,
+                            "skinXml": row.skinXml,
+                            "skinned": row.skinned
                         });
                         break;
                     case "edit":
-                        this.db.run("UPDATE accounts SET pfp = ?, bg = ?, phrase = ? WHERE username=?", [shit.pfp, shit.bg, shit.phrase, shit.username], (err) => {
-                            if(err) res.status(500).json({"message": "Could not.", "data": err});
-                            res.status(200).json({
-                                "message": "Account changed",
-                                "data": ""
-                            });
-
-                        });
+                        if(shit.skinPng && shit.skinXml){
+                            this.db.run("UPDATE accounts SET pfp = ?, bg = ?, skinPng = ?, skinXml = ?, phrase = ?, skinned = ? WHERE username=?", [shit.pfp, shit.bg, shit.skinPng, shit.skinXml, shit.phrase, true, shit.username], (err) => {
+                                if(err) res.status(500).json({"message": "Could not.", "data": err});
+                                res.status(200).json({
+                                    "message": "Account changed",
+                                    "data": ""
+                                });
+                            });    
+                        } else {
+                            this.db.run("UPDATE accounts SET pfp = ?, bg = ?, phrase = ?, skinned = ? WHERE username=?", [shit.pfp, shit.bg, shit.phrase, false, shit.username], (err) => {
+                                if(err) res.status(500).json({"message": "Could not.", "data": err});
+                                res.status(200).json({
+                                    "message": "Account changed",
+                                    "data": ""
+                                });
+                            });    
+                        }
                         break;
                     default:
                         res.status(200).json({"message": "Logged in but no action specified", "data": err});

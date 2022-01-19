@@ -25,7 +25,7 @@ import online.ConnectingState.songmeta;
 typedef Boolean = Bool; //doing this just to piss off haya :troll:
 class LobbyState extends MusicBeatState{
     public static var rooms:Room<Stuff>;
-    var p1:FlxSprite;
+    public static var p1:FlxSprite;
     public static var p2:FlxSprite;
     public static var songdata:ConnectingState.SongData = {song: '', week: 1, difficulty: 1};
     public static var roomcode:FlxText;
@@ -93,7 +93,6 @@ class LobbyState extends MusicBeatState{
 
         p2 = new Character(660, 303);
         p2.frames = Paths.getSparrowAtlas('BOYFRIEND');
-        p2.flipX = true;
         p2.animation.addByPrefix('idle', 'BF idle dance', 24, true);
         p2.animation.play("idle");
         p2.alpha = 0;
@@ -235,6 +234,11 @@ class LobbyState extends MusicBeatState{
         add(options);
         add(UI_box);
         if(ConnectingState.conmode != "join")add(roomcode);
+        
+
+        new FlxTimer().start(1, function(tmr:FlxTimer){
+            rooms.send('skinLoad', {owner: ConnectingState.p1name, name: ConnectingState.p2name});
+        });
 
         super.create();
     }
